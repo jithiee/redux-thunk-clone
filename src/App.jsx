@@ -1,3 +1,7 @@
+import { Routes , Route } from "react-router-dom"
+import CreateTakss from "./pages/CreateTakss"
+import TaskList from "./pages/TaskList"
+import Navbar from "./components/Navbar"
 
 
 function App() {
@@ -5,7 +9,12 @@ function App() {
 
   return (
     <>
- <h1  className="bg-blue-800 p-12 text-amber-600 " >hii</h1>
+    <Navbar/>
+    <Routes>
+       <Route path="/" element={<CreateTakss/>} />
+       <Route path="/taskilist" element={<TaskList/>} />
+    </Routes>
+    
     </>
   )
 }
