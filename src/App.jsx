@@ -2,6 +2,7 @@ import { Routes , Route } from "react-router-dom"
 import CreateTakss from "./pages/CreateTakss"
 import TaskList from "./pages/TaskList"
 import Navbar from "./components/Navbar"
+import EditTask from "./pages/EditTask"
 
 
 function App() {
@@ -13,6 +14,8 @@ function App() {
     <Routes>
        <Route path="/" element={<CreateTakss/>} />
        <Route path="/taskilist" element={<TaskList/>} />
+       <Route path="/edit-task/:id" element={<EditTask />} />
+
     </Routes>
     
     </>

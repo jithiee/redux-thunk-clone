@@ -1,18 +1,25 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTaskFromServer } from '../slice/taskSlice';
+import { getTaskFromServer , deleteTask } from '../slice/taskSlice';
+import { useNavigate } from 'react-router-dom';
 
 const TaskList = () => {
    const {tasks , isLoading , error} =  useSelector((state)=> state.taskInfo)
   //  console.log(tasks);
    const dispatch = useDispatch()
-    
+    const navigate = useNavigate();
+
   useEffect(()=>{
      dispatch(getTaskFromServer())
   }, []) 
+  
+  const handleDelete =(id)=>{
+     dispatch(deleteTask(id))
+  }
 
   return (
    <div className="min-h-screen bg-gray-700 p-8">
+     
   <div className="mx-auto max-w-4xl">
     
     {/* Heading */}
@@ -25,6 +32,10 @@ const TaskList = () => {
 
     {/* Task List */}
     <div className="space-y-4">
+
+      { isLoading &&     <h1 className='font-bold text-4xl text-amber-50'>Loading.....</h1>}
+      {error && <h1 className='font-bold text-4xl text-red-500'>server error</h1> }
+
       {tasks.map((item) => (
         <div
           key={item.id}
@@ -49,15 +60,18 @@ const TaskList = () => {
           <div className="flex gap-3">
             <button
               className="rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600"
+            
+            onClick={()=>handleDelete(item.id)}
             >
               Delete
             </button>
 
-            <button
+          <button
               className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-600"
-            >
+              onClick={() => navigate(`/edit-task/${item.id}`)}
+          >
               Edit
-            </button>
+          </button>
           </div>
         </div>
       ))}
