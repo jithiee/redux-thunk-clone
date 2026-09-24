@@ -59,7 +59,6 @@ export const updateTask = createAsyncThunk(
 )
 
 
-
 const taskSlice = createSlice({
       name:'tasks', 
       initialState,
@@ -110,27 +109,32 @@ const taskSlice = createSlice({
             state.isLoading - false
             state.error = action.payload.error
         })
+        //=========update task =================
+        .addCase(updateTask.pending , (state, action)=>{
+            state.isLoading = true
+            state.error = ''
+        })
+        .addCase(updateTask.fulfilled , (state, action)=>{
+            state.isLoading = false
 
-       //============= update task =========================
-        .addCase(updateTask.pending, (state) => {
-            state.isLoading = true;
-            state.error = '';
+            // state.tasks = state.tasks.map((item)=> 
+            //     item.id === action.payload.id ? action.payload : item
+            // )
+            const index = state.tasks.findIndex((item)=> item.id  === action.payload.id)
+            if(index !== -1){
+                state.tasks[index] = action.payload
+            }
+            // console.log(index);
+
+            
+
+        })
+        .addCase(updateTask.rejected , (state , action)=>{
+            state.isLoading  = false
+            state.error = action.payload?.error || 'No task updated'
         })
 
-        .addCase(updateTask.fulfilled, (state, action) => {
-            state.isLoading = false;
-
-            state.tasks = state.tasks.map((task) =>
-                task.id === action.payload.id
-                    ? action.payload
-                    : task
-            );
-        })
-
-        .addCase(updateTask.rejected, (state, action) => {
-            state.isLoading = false;
-            state.error = action.payload?.error || 'No task updated';
-        });
+       
       }
 })
 

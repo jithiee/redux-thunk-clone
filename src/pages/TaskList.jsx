@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTaskFromServer , deleteTask } from '../slice/taskSlice';
 import { useNavigate } from 'react-router-dom';
 
 const TaskList = () => {
    const {tasks , isLoading , error} =  useSelector((state)=> state.taskInfo)
+   const [search , setSearch ] = useState('')
   //  console.log(tasks);
    const dispatch = useDispatch()
     const navigate = useNavigate();
-
+    
   useEffect(()=>{
      dispatch(getTaskFromServer())
   }, []) 
@@ -66,12 +67,12 @@ const TaskList = () => {
               Delete
             </button>
 
-          <button
+            <button
               className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-600"
-              onClick={() => navigate(`/edit-task/${item.id}`)}
-          >
+            onClick={()=> navigate(`/edit-task/${item.id}`)}
+           >
               Edit
-          </button>
+            </button>
           </div>
         </div>
       ))}

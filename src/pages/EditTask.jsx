@@ -4,162 +4,110 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { updateTask } from '../slice/taskSlice';
 
 const EditTask = () => {
+    
+    const {id} = useParams()
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const {tasks , isLoading , error  } = useSelector((state)=>state.taskInfo)
 
-    const { id } = useParams();
-
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
-    const { tasks, isLoading, error } = useSelector(
-        (state) => state.taskInfo
-    );
-
-    const [formData, setFormData] = useState({
-        title: '',
-        description: ''
-    });
-
-    // Find selected task
-    useEffect(() => {
-
-        const task = tasks.find(
-            (item) => String(item.id) === String(id)
-        );
-
-        if (task) {
-            setFormData({
-                title: task.title,
-                description: task.description
-            });
-        }
-
-    }, [tasks, id]);
+    
+    const [formData , setFormData ] = useState({
+        title : '' , 
+        description : '', 
+    })
+  
+    //find selected task 
+    useEffect(()=>{
+       const task = tasks.find((item)=> String(item.id)  ===  String(id)  )
+       console.log(task);
+       
+       if(task){
+          setFormData({
+            title :task.title , 
+            description : task.description , 
+          })
+       }
+    }, [tasks, id])
 
 
-    // Input change
-    const handleChange = (e) => {
 
-        const { name, value } = e.target;
+const handleChange =(e)=>{
+   const { name , value } = e.target ;
+   setFormData({...formData , [name] : value})
+}
 
-        setFormData({
-            ...formData,
-            [name]: value
-        });
+const handleSubmit =(e)=>{
+   e.preventDefault()
+   dispatch(updateTask({
+        id: id,
+        title: formData.title,
+        description: formData.description
+    }));
 
-    };
+    navigate('/taskilist');
+}
 
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+  <form className="w-full max-w-md bg-white p-6 rounded-xl shadow-lg"
+   onSubmit={handleSubmit}
+  >
+    
+    <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+      Update Task
+    </h1>
 
-    // Submit
-    const handleSubmit = async (e) => {
+    <div className="space-y-4">
+      <input
+        type="text"
+        placeholder="Enter title"
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg 
+                   outline-none focus:ring-2 focus:ring-blue-500 
+                   focus:border-blue-500 transition"
+        value={formData.title}
+        name='title'
+        onChange={handleChange}
+      />
 
-        e.preventDefault();
+      <input
+        type="text"
+        placeholder="Enter description"
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg 
+                   outline-none focus:ring-2 focus:ring-blue-500 
+                   focus:border-blue-500 transition"
+         value={formData.description}
+          name='description'
+          onChange={handleChange}
+      />
+    </div>
 
-        const updatedTask = {
-            id: Number(id),
-            title: formData.title,
-            description: formData.description
-        };
+    <div className="flex gap-3 mt-6">
+      <button
+        type="submit"
+        className="flex-1 bg-blue-600 text-white py-3 rounded-lg 
+                   font-semibold hover:bg-blue-700 transition 
+                   active:scale-95"
+      >
+        Update
+      </button>
 
-        const result = await dispatch(
-            updateTask(updatedTask)
-        );
+      <button
+        type="submit"
+        className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg 
+                   font-semibold hover:bg-gray-300 transition 
+                   active:scale-95"
+      onClick={()=>navigate('/taskilist')}
+      
+      >
+        Cancel
+      </button>
+    </div>
 
-        if (updateTask.fulfilled.match(result)) {
-            navigate('/');
-        }
-
-    };
-
-
-    return (
-        <div className="min-h-screen bg-gray-700 p-8">
-
-            <div className="mx-auto max-w-xl">
-
-                <div className="rounded-xl bg-white p-6 shadow-lg">
-
-                    <h1 className="mb-6 text-3xl font-bold text-gray-800">
-                        Edit Task
-                    </h1>
-
-                    <form
-                        onSubmit={handleSubmit}
-                        className="space-y-5"
-                    >
-
-                        {/* Title */}
-                        <div>
-                            <label className="mb-2 block font-medium text-gray-700">
-                                Title
-                            </label>
-
-                            <input
-                                type="text"
-                                name="title"
-                                value={formData.title}
-                                onChange={handleChange}
-                                placeholder="Enter title"
-                                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                required
-                            />
-                        </div>
-
-
-                        {/* Description */}
-                        <div>
-                            <label className="mb-2 block font-medium text-gray-700">
-                                Description
-                            </label>
-
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleChange}
-                                placeholder="Enter description"
-                                rows="5"
-                                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                required
-                            />
-                        </div>
-
-
-                        {/* Error */}
-                        {error && (
-                            <p className="font-medium text-red-500">
-                                {error}
-                            </p>
-                        )}
-
-
-                        {/* Buttons */}
-                        <div className="flex gap-3">
-
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="rounded-lg bg-blue-500 px-5 py-3 font-medium text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                                {isLoading ? 'Updating...' : 'Update Task'}
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() => navigate('/')}
-                                className="rounded-lg bg-gray-500 px-5 py-3 font-medium text-white transition hover:bg-gray-600"
-                            >
-                                Cancel
-                            </button>
-
-                        </div>
-
-                    </form>
-
-                </div>
-
-            </div>
-
-        </div>
-    );
-};
+  </form>
+</div>
+  );
+}
 
 export default EditTask;
+
+
