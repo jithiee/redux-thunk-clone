@@ -96,20 +96,22 @@ const taskSlice = createSlice({
             state.isLoading = false
             state.error = action.payload
         })
-        //=============create task =========================
-        .addCase(addTaskToServer.pending , (state , action)=>{
-          state.isLoading = true
-
+        //============= create task =========================
+        .addCase(addTaskToServer.pending, (state) => {
+            state.isLoading = true
+            state.error = ''
         })
-        .addCase(addTaskToServer.fulfilled , (state , action)=>{
-            state.isLoading  = false
+
+        .addCase(addTaskToServer.fulfilled, (state, action) => {
+            state.isLoading = false
             state.tasks.push(action.payload)
         })
-        .addCase(addTaskToServer.rejected , (state , action)=>{
-            state.isLoading - false
-            state.error = action.payload.error
+
+        .addCase(addTaskToServer.rejected, (state, action) => {
+            state.isLoading = false
+            state.error = action.payload?.error || 'No task created'
         })
-        //=========update task =================
+                //=========update task =================
         .addCase(updateTask.pending , (state, action)=>{
             state.isLoading = true
             state.error = ''
